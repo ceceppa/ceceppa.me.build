@@ -1,0 +1,535 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Hi, I'm Alessandro</title><link>https://ceceppa.me/posts/</link><description>Recent content in Posts on Hi, I'm Alessandro</description><generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>hello@ceceppa.me (Alessandro Senese)</managingEditor><webMaster>hello@ceceppa.me (Alessandro Senese)</webMaster><copyright>&lt;a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0&lt;/a></copyright><lastBuildDate>Tue, 11 Feb 2020 09:20:02 +0100</lastBuildDate><atom:link href="https://ceceppa.me/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Why PHP namespace is better than prefixing</title><link>https://ceceppa.me/posts/2020/02/why-php-namespace-is-better-than-prefixing/</link><pubDate>Tue, 11 Feb 2020 09:20:02 +0100</pubDate><author>hello@ceceppa.me (Alessandro Senese)</author><guid>https://ceceppa.me/posts/2020/02/why-php-namespace-is-better-than-prefixing/</guid><description>One of the loved WordPress features is: how easy is to install and use 3rd party plugins to enhance our experience. And there are more than 55k plugins we can choose from! Cool, isn’t it?
+Is so cool that some users go crazy and start installing too many of them, but this is not what we’re talking about 🙂
+The uniqueness problem As a WordPress developer, we want to create a plugin and (maybe) publish it.</description><content type="html"><![CDATA[<p>One of the loved WordPress features is: how easy is to install and use 3rd party plugins to enhance our experience. And there are <a href="https://wordpress.org/plugins/">more than 55k plugins</a> we can choose from! Cool, isn’t it?<br>
+Is so cool that some users go crazy and start installing too many of them, but this is not what we’re talking about 🙂</p>
+<h2 id="the-uniqueness-problem">The uniqueness problem</h2>
+<p>As a WordPress developer, we want to create a plugin and (maybe) publish it. And so, we want to be sure that our function and class names won’t clash with other plugins installed.</p>
+<p>So, In this article, we’re going to see two methods to do so. In the specific, we’re going to compare the:</p>
+<ul>
+<li>old fashion way of prefixing</li>
+<li>PHP namespace</li>
+</ul>
+<h2 id="the-prefixing-namespace">The prefixing namespace</h2>
+<p>I and many others have used this approach for years and, to me, never caused any conflict. It is a reasonable method, but it has its own problems and also is out to date.</p>
+<blockquote>
+<p>All variables, functions and classes should be prefixed with a unique identifier. Prefixes prevent other plugins from overwriting your variables and accidentally calling your functions and classes. It will also prevent you from doing the same.</p>
+<p><a href="https://developer.wordpress.org/plugins/plugin-basics/best-practices/">https://developer.wordpress.org/plugins/plugin-basics/best-practices</a></p>
+</blockquote>
+<p>For the records: Let’s don’t forget that real namespaces were only introduced in 2009, six years after the first WordPress release. And also for many years later, some hosting service were still using PHP versions &lt; 5.3. So prefixing was a good practice back then, but personally seeing this suggested as best practice in 2020 feels a bit wrong.</p>
+<p>Anyway, let’s follow this practice.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#a6e22e">register_activation_hook</span>( <span style="color:#66d9ef">__FILE__</span>, <span style="color:#e6db74">&#39;pluginprefix_function_to_run&#39;</span> );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">pluginprefix_function_to_run</span>() {
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">...</span> <span style="color:#75715e">// do something
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>This is quite a common problem: doing some initialisation when we first activate the plugin. In this example, take from the <a href="https://developer.wordpress.org/plugins/plugin-basics/activation-deactivation-hooks/">WordPress website</a>, the prefix chosen is <strong>pluginprefix_</strong>.</p>
+<h4 id="whats-wrong-with-that">What’s wrong with that?</h4>
+<ol>
+<li>Does not guarantee at all that’s unique</li>
+<li>Add distracting noise</li>
+</ol>
+<h5 id="uniquity">Uniquity</h5>
+<p>Doesn’t really matter how much fantasy we put in to choose a cool prefix, there is no real guarantee that someone else will have the same idea.</p>
+<p>Funny enough, once I’ve met a person with my same name and surname, so I already know that using <code>alessandro_senese_</code> as a prefix doesn’t guarantee me uniquity.</p>
+<p>Another problem we have is length and memorability. If I should prefix my functions with my name and surname, it’s at least 16 characters to type every time. Even my nickname <code>ceceppa_</code> would be 7 characters.<br>
+Also, I should make them a bit unique for the project, for example: <code>cececeppa_muu_init</code>, where muu is a hypothetical project name.</p>
+<blockquote>
+<p>I know how to solve the issue: Make it short!</p>
+</blockquote>
+<p>That’s the common solution adopted, so I could use: <code>cmuu_</code> or <code>ceppa_muu_</code>.</p>
+<p>Yeah, that might work, but…</p>
+<h5 id="the-noise">The noise</h5>
+<blockquote>
+<p><strong>Noise is unwanted sound</strong> judged to be unpleasant, loud or <strong>disruptive to hearing</strong>. From a physics standpoint, <strong>noise is indistinguishable from sound</strong>, as both are vibrations through a medium, such as air or water.</p>
+<p><a href="https://en.wikipedia.org/wiki/Noise">https://en.wikipedia.org/wiki/Noise</a></p>
+</blockquote>
+<blockquote>
+<p><strong>ME</strong>: But we’re talking about code, not sound here!</p>
+</blockquote>
+<blockquote>
+<p><strong>ME</strong>: But we’re talking about code, not sound or physics!</p>
+</blockquote>
+<blockquote>
+<p><strong>ME</strong>: I know, I know. Let me finish</p>
+</blockquote>
+<p>Let’s rephrase for our purpose:</p>
+<blockquote>
+<p>Noise is unwanted code, disruptive to reading. From readability standpoint, noise is indistinguishable from code.</p>
+<p>&ndash; <cite>&ldquo;Me&rdquo;</cite></p>
+</blockquote>
+<p>I haven’t invented the word <strong>Noise</strong>, and you’ll hear more and more when you start caring about readability. But I couldn’t find any definition, so I’ve made up one 🙂</p>
+<p>Let’s compare some with and without prefix:</p>
+<p><strong>With</strong> prefix</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">myfirsttheme_setup</span>() { <span style="color:#f92672">...</span> }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">ceceppa_muu_on_plugin_activated</span>() { <span style="color:#f92672">...</span> }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">ceceppa_muu_function_a</span>() { <span style="color:#f92672">...</span> }
+</span></span></code></pre></div><ul>
+<li>👍 the function name is unique</li>
+<li>👎 is camouflaged with the function name</li>
+<li>👎 forces us to mentally separate it from the rest of the function name, to figure out what’s it does</li>
+<li>👎 is unique to the project, and cannot be easily reused across different projects</li>
+<li>👎 you cannot have another function with the same name</li>
+</ul>
+<p><strong>Without</strong> prefix</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">theme_setup</span>() { <span style="color:#f92672">...</span> }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">on_plugin_activated</span>() { <span style="color:#f92672">...</span> }
+</span></span></code></pre></div><ul>
+<li>👍 there is no cognitive load</li>
+<li>👍 the function name is already self explaining</li>
+<li>👎 the function name is not unique, it could clash with other plugins</li>
+</ul>
+<p><em><strong>NOTE:</strong> For unique I intend the possibility of clashing with 3rd party plugins or themes!</em></p>
+<p>As we have seen using prefix does solve this problem but also introduces new ones, that affect our code readability.</p>
+<h3 id="2-the-namespace">2. The namespace</h3>
+<blockquote>
+<p>What are namespaces? In the broadest definition namespaces are a way of encapsulating items.</p>
+<p>&ndash; <a href="https://www.php.net/manual/en/language.namespaces.rationale.php">php.net</a></p>
+</blockquote>
+<p>So, basically, like prefixing, a namespace is used to prevent name collisions within your or 3rd party functions.</p>
+<p>The main difference with prefixing, is that namespace is defined, a the top of each file, using the <a href="https://www.php.net/manual/en/language.namespaces.definition.php">namespace</a> keyword.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">MyWonderfulTheme</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">theme_setup</span>() {<span style="color:#f92672">...</span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">do_something_cool</span>() { <span style="color:#f92672">...</span> }
+</span></span></code></pre></div><p>Now <strong>all the functions</strong> within the same file have the same <strong>MyWonderfulTheme</strong> namespace. This means that we can use the same function name with a different namespace:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">MyAmezingPlugin</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">on_plugin_activated</span>() {<span style="color:#f92672">...</span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">do_something_cool</span>() {<span style="color:#f92672">...</span>}
+</span></span></code></pre></div><p>In this example, the two <strong>do_something_cool</strong> function names do not clash with each other, because they have a different namespace. The full signature for each function is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#a6e22e">MyWonderfulTheme</span><span style="color:#f92672">::</span><span style="color:#a6e22e">do_something_cool</span> {<span style="color:#f92672">...</span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">MyAmezingPlugin</span><span style="color:#f92672">::</span><span style="color:#a6e22e">do_something_cool</span> {<span style="color:#f92672">...</span>}
+</span></span></code></pre></div><h3 id="make-it-esplicit">Make it esplicit</h3>
+<p>Another advantage of using a namespace is that’s only specified once, at the top of each PHP file. So you can get as much as creative you want, there is no need to came up with cryptic short names, just to save a few characters.</p>
+<blockquote>
+<p>Much like directories and files, PHP namespaces also contain the ability to specify a hierarchy of namespace names. Thus, a namespace name can be defined with sub-levels:</p>
+<p>&ndash; <a href="https://www.php.net/manual/en/language.namespaces.nested.php">https://www.php.net/manual/en/language.namespaces.nested.php</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">MyProjectSubLevel</span>;
+</span></span></code></pre></div><h2 id="use-namespace">Use namespace</h2>
+<p>With namespace, there are few differences to consider when to want to access to a function or a class.</p>
+<h3 id="same-file-namespace">Same file namespace</h3>
+<p>Inside the same file a function (or class) can call each other without the need of specifying the prefix.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">TestNamespace</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">function_a</span>() {
+</span></span><span style="display:flex;"><span><span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">function_b</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">function_a</span>();
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="access-from-another-file">Access from another file</h3>
+<p>If we have two or more files with different namespaces, to access each other function/class we have to specify the full prefix to do so:</p>
+<ul>
+<li><strong>Namespace1</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Namespace1</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">function_a</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">Namespace2function_b</span>();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">function_b</span>() {
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>To access a different namespace we have to prepend the backslash symbol</p>
+<ul>
+<li><strong>Namespace2</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Namespace2</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TestClass</span>() {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">function_b</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">SubLevelfunction_b</span>();
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>When accessing a sub-namespace, we can omit the part in common</p>
+<ul>
+<li><strong>Sub-level of Namespace2</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Namespace2SubLevel</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">function_a</span>() {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">function_b</span>() {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">function_c</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Namespace2TestClass</span>();
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>There is no shortcut to access a parent namespace, but we have to specify the full namespace</p>
+<h4 id="namespace-aliasingimporting">Namespace: Aliasing/importing</h4>
+<blockquote>
+<p>The ability to refer to an external fully qualified name with an alias, or importing, is an important feature of namespaces. This is similar to the ability of unix-based filesystems to create symbolic links to a file or to a directory.</p>
+<p>&ndash; <a href="https://www.php.net/manual/en/language.namespaces.importing.php">https://www.php.net/manual/en/language.namespaces.importing.php</a></p>
+</blockquote>
+<p>As we have seen, to access a function or class from a different namespace we have, each time, specify the full signature. This can be very annoying, but don’t worry we can use the use keyword to simplify our life 🙂</p>
+<h5 id="functions">Functions</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">\</span>[<span style="color:#a6e22e">FULL</span> <span style="color:#66d9ef">NAMESPACE</span><span style="color:#a6e22e">\</span>]<span style="color:#a6e22e">\</span>[<span style="color:#66d9ef">Function</span> <span style="color:#a6e22e">name\</span>]
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">\</span>[<span style="color:#a6e22e">FULL</span> <span style="color:#66d9ef">NAMESPACE</span><span style="color:#a6e22e">\</span>]<span style="color:#a6e22e">\</span>[<span style="color:#66d9ef">Function</span> <span style="color:#a6e22e">name\</span>] <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">\</span>[<span style="color:#a6e22e">ALIAS\</span>]
+</span></span></code></pre></div><p>Example</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Namespace1</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">Namespace2function_a</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">Namespace2Sublevelfunction_a</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">another_function</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// equivalent to: Namespace2function_a();
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">function_a</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// equivalent to: Namespace2Sublevelfunction_a();
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">another_function</span>();
+</span></span></code></pre></div><p>Aliasing allows us to use a function with a different name</p>
+<h5 id="classes">Classes</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#a6e22e">\</span>[<span style="color:#a6e22e">FULL</span> <span style="color:#66d9ef">NAMESPACE</span><span style="color:#a6e22e">\</span>]<span style="color:#a6e22e">\</span>[<span style="color:#66d9ef">CLASS</span> <span style="color:#a6e22e">NAME\</span>];
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#a6e22e">\</span>[<span style="color:#a6e22e">FULL</span> <span style="color:#66d9ef">NAMESPACE</span><span style="color:#a6e22e">\</span>]<span style="color:#a6e22e">\</span>[<span style="color:#66d9ef">CLASS</span> <span style="color:#a6e22e">NAME\</span>] <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">\</span>[<span style="color:#a6e22e">ALIAS\</span>];
+</span></span></code></pre></div><p>Example</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Namespace1</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#a6e22e">Namespace2ClassName</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#a6e22e">Namespace2SublevelClassName</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">AnotherClass</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// equivalent to: new Namespace2ClassName();
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">new</span> <span style="color:#a6e22e">ClassName</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// equivalent to: new Namespace2SublevelClassName();
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">new</span> <span style="color:#a6e22e">AnotherClass</span>();
+</span></span></code></pre></div><p>Aliasing allows use to use a class with a different name</p>
+<h5 id="namespace-aliasing">Namespace aliasing</h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#a6e22e">\</span>[<span style="color:#a6e22e">FULL</span> <span style="color:#66d9ef">NAMESPACE</span><span style="color:#a6e22e">\</span>] <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">\</span>[<span style="color:#a6e22e">ALIAS\</span>]
+</span></span></code></pre></div><p>Example</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Namespace1</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#a6e22e">Namespace2</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">N2</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// equivalent to: Namespace2::function_a();
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">N2</span><span style="color:#f92672">::</span><span style="color:#a6e22e">function_a</span>();
+</span></span></code></pre></div><p>We cannot use the aliased namespace to import another namespace, for example the following code won’t work:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Namespace1</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#a6e22e">Namespace2</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">N2</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">N2Sublevel</span><span style="color:#f92672">::</span><span style="color:#a6e22e">function_a</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Undefined function &#39;N2Sublevel::function_a&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">function_a</span>();
+</span></span></code></pre></div><p>If you, like me, use VSCode and don’t like to type or remember the namespaces every time, you can use the <a href="https://marketplace.visualstudio.com/items?itemName=bmewburn.vscode-intelephense-client">PHP Intelephense addon.</a> It will automatically add the namespace import in the first PHP block available.<br>
+For example<a href="https://marketplace.visualstudio.com/items?itemName=bmewburn.vscode-intelephense-client">,</a> we can have to type only <code>function_a</code>:</p>
+<p><img alt="Showcasing Intelliphense autoimport" src="intelephense-autoimport.gif"></p>
+<p>Intelephense addon in action</p>
+<h4 id="the-__namespace__-magic-keywordhttpswwwphpnetmanualenlanguagenamespacesnsconstantsphp"><a href="https://www.php.net/manual/en/language.namespaces.nsconstants.php">The __NAMESPACE__ magic keyword</a></h4>
+<p>Another thing to consider, when working with namespaces, is that for filters and hooks we have to pass the full signature of the class / function we want to call.</p>
+<ul>
+<li>👎 Doesn&rsquo;t work: The function <code>initialise</code> will never be called</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Namespace1</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">add_filter</span>( <span style="color:#e6db74">&#39;init&#39;</span>, <span style="color:#e6db74">&#39;initialise&#39;</span> );
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">add_filter</span>( <span style="color:#e6db74">&#39;init&#39;</span>, [ <span style="color:#e6db74">&#39;TestClass&#39;</span>, <span style="color:#e6db74">&#39;init&#39;</span> ] );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">initialise</span>() {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TestClass</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">init</span>() {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>👍 Works: We always have to specify the full signature, and the <code>use</code> keyword won’t help us in this case</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Namespace1</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">add_filter</span>( <span style="color:#e6db74">&#39;init&#39;</span>, <span style="color:#e6db74">&#39;Namespace1\\initialise&#39;</span> );
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">add_filter</span>( <span style="color:#e6db74">&#39;init&#39;</span>, [ <span style="color:#e6db74">&#39;Namespace1\\TestClass&#39;</span>, <span style="color:#e6db74">&#39;init&#39;</span> ] );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">initialise</span>() {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TestClass</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">init</span>() {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><blockquote>
+<p>But we don’t want type the namespaces everytime!
+&ndash; All of us</p>
+</blockquote>
+<p>I agree and don’t worry, PHP help us with the __NAMESPACE__ magic keyword:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Namespace1</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">add_filter</span>( <span style="color:#e6db74">&#39;init&#39;</span>, <span style="color:#66d9ef">__NAMESPACE__</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;initialise&#39;</span> );
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">add_filter</span>( <span style="color:#e6db74">&#39;init&#39;</span>, [ <span style="color:#66d9ef">__NAMESPACE__</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;TestClass&#39;</span>, <span style="color:#e6db74">&#39;init&#39;</span> ] );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">initialise</span>() {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TestClass</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">init</span>() {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Cool, isn’t it? Also if we change the namespace name both filter will still work!</p>
+<h4 id="access-global-classes">Access global classes</h4>
+<p>The last thing we have to consider when working with namespaces is that global WordPress classes and functions belong to the root namespace. And so to access them we have to prepend the backslash sign:</p>
+<ul>
+<li>👎 Doesn’t work: WP_Query is not in the same namespace</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Namespace1</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">get_post_meta</span>(<span style="color:#f92672">...</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$posts <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">WP_Query</span>(<span style="color:#f92672">...</span>);
+</span></span></code></pre></div><ul>
+<li>👍 Works: We need to prepend the backslash to access global namespace</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Namespace1</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">get_post_meta</span>(<span style="color:#f92672">...</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$posts <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">\WP_Query</span>(<span style="color:#f92672">...</span>);
+</span></span></code></pre></div><h2 id="conclusions">Conclusions</h2>
+<p>As we have seen PHP Namespace provides more benefits than the old fashing prefixing. It’s easy to use and make our code cleaner.</p>
+<p>Also, if in future we want to work/experiment with a PHP framework, like Laravel, Symphony, etc… We definitely need to get familiar with namespaces!</p>
+]]></content></item><item><title>Composer for modern WordPress development: Why and how</title><link>https://ceceppa.me/posts/2020/01/composer-for-modern-wordpress-development-why-and-how/</link><pubDate>Sun, 26 Jan 2020 09:20:02 +0100</pubDate><author>hello@ceceppa.me (Alessandro Senese)</author><guid>https://ceceppa.me/posts/2020/01/composer-for-modern-wordpress-development-why-and-how/</guid><description>As a WordPress developer, I do often rely on Composer libraries to easily manage CPTs, Settings, Infinite scroll, API integration, and much more…
+Composer is a tool for dependency management in PHP. It allows you to declare the dependent libraries your project needs and it will install them in your project for you.
+getcomposer.org
+Beautiful definition, but what does it mean?
+We can see Composer like a kind of npm but for the PHP world, and like npm, it allows you to easily install, update and remove 3rd party libraries, or publishing your own private/public ones.</description><content type="html"><![CDATA[<p>As a WordPress developer, I do often rely on Composer libraries to easily manage CPTs, Settings, Infinite scroll, API integration, and much more…</p>
+<blockquote>
+<p><a href="https://getcomposer.org/">Composer</a> is a tool for dependency management in PHP. It allows you to declare the dependent libraries your project needs and it will install them in your project for you.</p>
+<p>getcomposer.org</p>
+</blockquote>
+<p>Beautiful definition, but what does it mean?</p>
+<p>We can see Composer like a kind of npm but for the PHP world, and like npm, it allows you to easily install, update and remove 3rd party libraries, or publishing your own private/public ones.</p>
+<h2 id="lets-have-a-look">Let’s have a look</h2>
+<p>When writing a theme or plug-in for WordPress quite often we need to register our CPT, and here we have two possibilities:</p>
+<p>1. Use the built-in <a href="https://codex.wordpress.org/Function_Reference/register_post_type">register_post_type</a> function</p>
+<p>2. Use a 3rd party class like <a href="https://github.com/jjgrainger/PostTypes">PostTypes</a></p>
+<p>While the first option works fine, we can argue that with the second one we:</p>
+<ul>
+<li>have a more clear syntax</li>
+<li>can easily attach taxonomies to the CPT</li>
+<li>can easily customise the columns in the back-end.</li>
+</ul>
+<p>So, let’s see how to use that library with and without Composer</p>
+<h2 id="the-manual-way">The manual way</h2>
+<p>In this case, we want to put our 3rd party libraries in a separate folder, for example, <strong>/lib</strong>, so:</p>
+<h3 id="1-create-the-folder">1. Create the folder</h3>
+<p>That’s easy; let’s create one:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>    mkdir lib
+</span></span></code></pre></div><h3 id="2-download-the-package">2. Download the package</h3>
+<p>Let’s open the <a href="https://github.com/jjgrainger/PostTypes">GitHub link</a> and download the zip</p>
+<h3 id="3-unzip">3. Unzip</h3>
+<p>Now we can unzip</p>
+<p>To include 3rd party library we could y create a subfolder, for example, <strong>/lib,</strong> copy inside the libraries we want to use and include it.</p>
+<h3 id="4-include-the-library">4. Include the library</h3>
+<p>In our case, we have to add the following line in our theme/plugin:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>    require <span style="color:#e6db74">&#39;lib/PostTypes/src/PostTypes.php&#39;</span>;
+</span></span></code></pre></div><p>That’s it, it works!</p>
+<h3 id="finish">Finish</h3>
+<p>Although manually installing a library is relatively easy to job to do, it soon becomes tedious to install, update or remove additional libraries.</p>
+<p>So, as you can see, this is not convenient that convenient after all.</p>
+<h2 id="the-composer-way">The Composer way</h2>
+<p>Assuming that we <a href="https://getcomposer.org/doc/00-intro.md">already have installed Composer</a>, all we need to do now is:</p>
+<h3 id="1-install-the-library">1. Install the library</h3>
+<p>open the terminal in our project folder and run:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>    composer require jjgrainger/posttypes
+</span></span></code></pre></div><h3 id="2-import-the-autoloadphp-file">2. Import the autoload.php file</h3>
+<p>In your <strong>functions.php</strong> or the plugin <strong>index.php</strong> file, add the following line:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span>    <span style="color:#66d9ef">require</span> <span style="color:#66d9ef">__DIR__</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;/vendor/autoload.php&#39;</span>;
+</span></span></code></pre></div><p><em>NOTE: This step is only required once, so we don’t need to do anything when installing additional libraries</em></p>
+<h3 id="thats-all">That’s all</h3>
+<p>As seen here, Composer is very easy to use, and also we have to learn only <a href="https://devhints.io/composer">a few commands</a> to master it.</p>
+<h2 id="why-i-do-prefer-composer">Why I do prefer Composer?</h2>
+<p>Although we did have a look at a simple example, in reality, I do often need reusing code across multiple projects or interact with 3rd party APIs.</p>
+<p>In those cases, I don’t want to keep reinventing the wheel every time, because:</p>
+<ol>
+<li>it is a bug-prone process, the more code we write more likely we’re introducing new bugs</li>
+<li>we have more code to test and maintain</li>
+</ol>
+<p>For this reason, I’ve created my own libraries to handle common problems I face quite often during the development, like:</p>
+<ul>
+<li>load more and dynamic filtering with ajax</li>
+<li>process large dataset and files in batches</li>
+<li>manage setting pages</li>
+<li>helpers for debug information (useful during development)</li>
+</ul>
+<p>So while working on a plugin or theme, I can add any of them with a simple <code>composer require</code> command.</p>
+<p>Other benefits are:</p>
+<ul>
+<li>
+<p>any time I fix a bug or implement a new feature in any of those libraries, I can easily update them in my projects by using <code>composer update</code></p>
+</li>
+<li>
+<p>I can easily share them so that can be easily installed via Composer</p>
+</li>
+<li>
+<p>I can specify which version of the package I want to install.</p>
+<p>For example, the WordPress test library is not compatible yet with the latest PHPUnit (8.x), so for writing unit test we have to specify which version to install:</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>  composer require phpunit/phpunit@7.1
+</span></span></code></pre></div><ul>
+<li>
+<p>The lock file</p>
+<p>Every time we install, update or remove a library Composer will generate/update a file called <strong>composer.lock</strong>.</p>
+<p>This file contains information about the version of the library we’re using, so next time we run a composer install, it will make sure to use the same version.</p>
+</li>
+<li>
+<p>The repository
+<a href="https://packagist.org/">Packagist</a> is the main Composer repository, and at the moment, there are more than <a href="https://web.archive.org/web/20211224180650/https://packagist.org/?tags=wordpress">2.8k libraries</a> with the tag WordPress.</p>
+</li>
+</ul>
+<p>As you can see for me all this flexibility is vital for my development process.</p>
+<h3 id="whats-next">What’s next?</h3>
+<p>In the next articles, we’re going to talk more about Composer, and starting from the next one we’re going to see how to publish and use our private and public library.</p>
+]]></content></item><item><title>Modern WordPress development</title><link>https://ceceppa.me/posts/2020/01/modern-wordpress-development/</link><pubDate>Fri, 24 Jan 2020 09:20:02 +0100</pubDate><author>hello@ceceppa.me (Alessandro Senese)</author><guid>https://ceceppa.me/posts/2020/01/modern-wordpress-development/</guid><description>I’ve started using WordPress back in 2008 to develop themes and plugins. And since then a lot has changed in both WordPress and Web development worlds.
+For example, I’ve used it as a framework for building about 4/5 web apps powered by VueJS. But also, because of Gutenberg, I had the opportunity to learn and work with React.
+What is “Modern” WordPress development? In 2018 at the WordCamp London there was a panel of small companies and developers exchanging their own experience as WordPress development.</description><content type="html"><![CDATA[<p>I’ve started using WordPress back in 2008 to develop themes and plugins. And since then a lot has changed in both WordPress and Web development worlds.</p>
+<p>For example, I’ve used it as a framework for building about 4/5 web apps powered by <a href="https://vuejs.org/">VueJS</a>. But also, because of <a href="https://web.archive.org/web/20211223172800/https://wordpress.org/gutenberg/">Gutenberg</a>, I had the opportunity to learn and work with <a href="https://web.archive.org/web/20211223172800/https://reactjs.org/">React</a>.</p>
+<h2 id="what-is-modern-wordpress-development">What is “Modern” WordPress development?</h2>
+<p><img alt="Old devices" src="/posts/2020/01/modern-wordpress-development/old.webp"></p>
+<p>In 2018 at the WordCamp London there was a panel of small companies and developers exchanging their own experience as WordPress development.</p>
+<p>During the talk, some of them admitted to writing pure CSS because <strong>they had no time to learn SASS.</strong></p>
+<p>Also, one of the companies I’ve worked did outsource a few website developments.</p>
+<p>Nothing wrong with that, but the quality of the code wasn’t great. The common problem was:</p>
+<ul>
+<li>No JavaScript tooling (i.e. Webpack, ParcelJS) used, but a single massive +1k lines JavaScript file</li>
+<li>Lack of any coding standard used for both PHP and JavaScript files</li>
+<li>Massive and disorganised PHP files</li>
+</ul>
+<p>Do you think this is an isolated case? If so, how many popular plugins and themes do use tools like <a href="https://webpack.js.org/">Webpack</a>, <a href="https://web.archive.org/web/20211223172800/https://parceljs.org/">Parcel</a>, <a href="https://web.archive.org/web/20211223172800/https://getcomposer.org/">Composer</a>, <a href="https://web.archive.org/web/20211223172800/https://phpunit.de/">PHPUnit</a>, SASS, LESS, <a href="https://web.archive.org/web/20211223172800/https://postcss.org/">PostCSS</a>…? But also, how many developers or companies you know do the same?</p>
+<p>Believe me, if you go and check, I’m sure you’ll be surprised!</p>
+<h2 id="so-what-do-i-mean-with-modern">So, what do I mean with “Modern”?</h2>
+<p>Simple, I mean the opposite of what I’ve described above: Learn, and take advantage of those tools will allow us:</p>
+<ul>
+<li>saving time</li>
+<li>becoming better developers</li>
+<li>boost our career</li>
+</ul>
+<h2 id="i-havent-got-time-for-this">I haven’t got time for this</h2>
+<p>Remember the episode I talked about while I was attending the WordCamp in London?</p>
+<p>I was shocked by their “I don’t have time” excuse… <strong>that’s the WRONG attitude!</strong> And as most of the excuses that we use, this does not help but only damage ourself.</p>
+<h3 id="but-why-should-we-care">But why should we care?</h3>
+<p>If you don’t agree with me, or still not sure why let’s take a look some small example.</p>
+<p>The main stylesheet for my old website contains about 1k lines and imagine we want to do some change to the <em><code>.mobile-menu</code></em> class.</p>
+<p>Scrolling to find it is out of questions, too many lines and is too slow.</p>
+<p>So, let’s do a search… Found it at line ~851, yay:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-css" data-lang="css"><span style="display:flex;"><span>.<span style="color:#a6e22e">mobile-menu</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">background</span>: <span style="color:#a6e22e">var</span>(<span style="color:#f92672">--</span><span style="color:#66d9ef">color</span><span style="color:#f92672">-</span><span style="color:#66d9ef">black</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">position</span>: <span style="color:#66d9ef">fixed</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">bottom</span>: <span style="color:#ae81ff">10</span><span style="color:#66d9ef">px</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">left</span>: <span style="color:#ae81ff">50</span><span style="color:#66d9ef">%</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">-webkit-</span><span style="color:#66d9ef">transform</span>: translateX(<span style="color:#ae81ff">-50</span><span style="color:#66d9ef">%</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">transform</span>: translateX(<span style="color:#ae81ff">-50</span><span style="color:#66d9ef">%</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">border-radius</span>: <span style="color:#ae81ff">50</span><span style="color:#66d9ef">%</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">opacity</span>: <span style="color:#ae81ff">0.9</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">cursor</span>: <span style="color:#66d9ef">pointer</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">display</span>: <span style="color:#66d9ef">none</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">z-index</span>: <span style="color:#ae81ff">10</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">-webkit-</span><span style="color:#66d9ef">transition</span>: <span style="color:#66d9ef">all</span> <span style="color:#ae81ff">0.15</span><span style="color:#66d9ef">s</span> <span style="color:#66d9ef">ease</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">transition</span>: <span style="color:#66d9ef">all</span> <span style="color:#ae81ff">0.15</span><span style="color:#66d9ef">s</span> <span style="color:#66d9ef">ease</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">-webkit-</span><span style="color:#66d9ef">box-shadow</span>: <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">5</span><span style="color:#66d9ef">px</span> <span style="color:#ae81ff">1</span><span style="color:#66d9ef">px</span> rgba(<span style="color:#ae81ff">249</span>, <span style="color:#ae81ff">105</span>, <span style="color:#ae81ff">14</span>, <span style="color:#ae81ff">0.6</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">box-shadow</span>: <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">0</span> <span style="color:#ae81ff">5</span><span style="color:#66d9ef">px</span> <span style="color:#ae81ff">1</span><span style="color:#66d9ef">px</span> rgba(<span style="color:#ae81ff">249</span>, <span style="color:#ae81ff">105</span>, <span style="color:#ae81ff">14</span>, <span style="color:#ae81ff">0.6</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>In my case, I’ve used <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties">CSS variables</a> and this means that to know the value of <code>--color-black</code> I need to scroll up the entire document, find what I’m looking for in:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-css" data-lang="css"><span style="display:flex;"><span>:<span style="color:#a6e22e">root</span> {
+</span></span><span style="display:flex;"><span>  --display-medium: <span style="color:#ae81ff">975</span><span style="color:#66d9ef">px</span>;
+</span></span><span style="display:flex;"><span>  --display-small: <span style="color:#ae81ff">767</span><span style="color:#66d9ef">px</span>;
+</span></span><span style="display:flex;"><span>  --color-black: <span style="color:#ae81ff">#2e343b</span>;
+</span></span><span style="display:flex;"><span>  --color-bg: <span style="color:#ae81ff">#fff</span>;
+</span></span><span style="display:flex;"><span>  --color-white: <span style="color:#ae81ff">#fff</span>;
+</span></span><span style="display:flex;"><span>  --color-shadow: <span style="color:#ae81ff">#939393</span>;
+</span></span><span style="display:flex;"><span>  --color-orange: <span style="color:#ae81ff">#d43900</span>;
+</span></span><span style="display:flex;"><span>  --color-light-orange: rgb(<span style="color:#ae81ff">249</span>, <span style="color:#ae81ff">105</span>, <span style="color:#ae81ff">14</span>);
+</span></span><span style="display:flex;"><span>  --color-menu: <span style="color:#ae81ff">#082213</span>;
+</span></span><span style="display:flex;"><span>  --color-menu-search-hover: <span style="color:#ae81ff">#bbd4d4</span>;
+</span></span><span style="display:flex;"><span>  --color-orange-opaque: rgba(<span style="color:#ae81ff">249</span>, <span style="color:#ae81ff">105</span>, <span style="color:#ae81ff">14</span>, <span style="color:#ae81ff">0.4</span>);
+</span></span><span style="display:flex;"><span>  --color-sidebar-link: <span style="color:#ae81ff">#91a6ba</span>;
+</span></span><span style="display:flex;"><span>  --color-social-bar: <span style="color:#ae81ff">#48525d</span>;
+</span></span><span style="display:flex;"><span>  --color-social-bar-link: <span style="color:#ae81ff">#b2cce5</span>;
+</span></span><span style="display:flex;"><span>  --color-tooltip-bg: <span style="color:#ae81ff">#009fd4</span>;
+</span></span><span style="display:flex;"><span>  --color-quote: <span style="color:#ae81ff">#050709</span>;
+</span></span><span style="display:flex;"><span>  --color-quote-border: rgba(<span style="color:#ae81ff">112</span>, <span style="color:#ae81ff">128</span>, <span style="color:#ae81ff">144</span>, <span style="color:#ae81ff">0.36863</span>);
+</span></span><span style="display:flex;"><span>  --color-quote-symbol: <span style="color:#ae81ff">#f9690e</span>;
+</span></span><span style="display:flex;"><span>  --color-body-link: <span style="color:#ae81ff">#006080</span>;
+</span></span><span style="display:flex;"><span>  --content-width: <span style="color:#ae81ff">1210</span><span style="color:#66d9ef">px</span>;
+</span></span><span style="display:flex;"><span>  --post-header-height: <span style="color:#ae81ff">350</span><span style="color:#66d9ef">px</span>;
+</span></span><span style="display:flex;"><span>  --transition-fast: <span style="color:#ae81ff">0.2</span><span style="color:#66d9ef">s</span>;
+</span></span><span style="display:flex;"><span>  --transition-slow: <span style="color:#ae81ff">0.3</span><span style="color:#66d9ef">s</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Go back to line 851 and carry on with your reading/change, and then go to the next issue.</p>
+<p>Now imagine doing the same thing on a 5k+ or 10k+ huge stylesheet, or maintaining a single 1k+ JavaScript file…<br>
+That sounds a bit crazier and time-consuming, doesn’t it?</p>
+<h2 id="yes-i-can-do-it-but-take-it-easy">Yes, I can do it (but take it easy)!</h2>
+<blockquote>
+<p>Bravo/a that’s the right mindset!</p>
+<p>&ndash; <cite>&ldquo;Me&rdquo;</cite></p>
+</blockquote>
+<p>One of the companies I’ve worked used to create one big CSS file for each project/theme. Comments block were used to separate each section within the file. And trust me, maintaining them was a real nightmare.</p>
+<p>So, soon after joining, I proposed to use SASS to make things more manageable:</p>
+<blockquote>
+<p><strong>ME</strong>: Let’s use SASS! It makes it easier to write and maintain the CSS</p>
+</blockquote>
+<blockquote>
+<p><em>Boss</em>: But no one knows how to use it</p>
+</blockquote>
+<blockquote>
+<p><strong>ME</strong>: They don’t have to learn it straight away, but they CSS the old way and slowly learn how to take advantage of SASS features</p>
+</blockquote>
+<p>And that’s what we did!<br>
+We made the transition from plain CSS to SASS as painless as possible. We had to teach people only:</p>
+<ul>
+<li>How to use grunt to compile the SASS files</li>
+<li>How to use imports and nested selectors</li>
+</ul>
+<p>That’s all, and the next project we started we were able to use SASS with almost zero friction. And with a bit of time people started to master SASS and writing mixing, functions, etc…</p>
+<p>A similar thing happened years later when one of my colleagues proposed to migrate from SASS to PostCSS. He talked us through the benefits of using it, to be sure we understood the value. And after he did configure it so we could use it in a similar way we did with SASS.</p>
+<p>In the beginning, the only thing we had to change, was the extension of the file: from <strong>.scss</strong> to <strong>.pcss</strong>.<br>
+And slowly, we started to explore more about 3rd party plugins and writing custom functions.</p>
+<p>So as you see, when embracing a new tool, or technology, we should do it progressively. Start from the basic and improve along as we get more confident using it.</p>
+<h3 id="the-zero-configuration-dream">The zero-configuration dream</h3>
+<p>There are tools like <a href="https://webpack.js.org/">Webpack</a> and <a href="https://parceljs.org/">Parcel</a> that offer that. This means that we can start using them right away with zero or small effort!</p>
+<h3 id="we-cannot-know-everything">We cannot know everything</h3>
+<p>Also, there are cases when it’s enough to have a basic understanding of a tool. Either because it is not our primary focus, or we don’t have time to go deeper.</p>
+<p>For example, I know how to use Docker. I’ve created a custom WordPress image to used in my previous company, and for my local development. But that’s all, I’ve learned the basic and understood how I could use it for my day-to-day development.<br>
+Why? Because Docker is not my priority, is not a fundamental skill for my current job or career, neither I have time to learn it 🙂</p>
+<h2 id="the-career">The career</h2>
+<p>If we go and search for any mid or senior backend/frontend JOB, we can see that all of them have something in common: They expect knowledge/proficiency/usage of some tool, for example:</p>
+<ul>
+<li>Composer</li>
+<li>Unit test (i.e., PHPUnit, Jest, Mocha)</li>
+<li>CSS Pre-processor (i.e. SASS, LESS, PostCSS)</li>
+<li>JavaScript framework (i.e. VueJS, React)</li>
+<li>etc</li>
+</ul>
+<p>And the good news is: We can use most of them when writing a WordPress plugin or theme.</p>
+<p>And actually, this is my story!<br>
+I’ve used WordPress to learn and practice like:</p>
+<ul>
+<li>Unit test and TDD with PHPUnit and Jest</li>
+<li>CSS Grid/Flexbox</li>
+<li>Write vanilla JS</li>
+<li>Write a Web App with VueJS and React</li>
+<li>How to use REST API and GraphQL</li>
+</ul>
+<p>Thanks to that, in my last job search, I was contacted by several companies, not recruiters! And had different offers, and so the opportunity of deciding which challenge to text next!</p>
+<blockquote>
+<p>WordPress is the perfect platform for learning, experimenting and improve our skills!</p>
+<p>&ndash; <cite>&ldquo;Me&rdquo;</cite></p>
+</blockquote>
+<h2 id="whats-next">What’s next?</h2>
+<p>In the next weeks, I’m going to write more about my WordPress development adventures in using and experimenting with various tools.</p>
+<p>I’m going to talk about real-life problems I faced when working for WordPress agencies, and as a solo developer.</p>
+]]></content></item><item><title>Demistify Ssh</title><link>https://ceceppa.me/posts/2018/10/demistify-ssh/</link><pubDate>Sat, 27 Oct 2018 09:20:02 +0100</pubDate><author>hello@ceceppa.me (Alessandro Senese)</author><guid>https://ceceppa.me/posts/2018/10/demistify-ssh/</guid><description>My “Demystify SSH” slides for WordCamp Manchester 2018.</description><content type="html"><![CDATA[<iframe src="https://ceceppa.github.io/demystify-ssh/#/" width="100%" height="600px"></iframe>
+<p>My <a href="https://ceceppa.github.io/demystify-ssh/#/">“Demystify SSH”</a> slides for <a href="https://wordpress.tv/2019/05/07/alejandro-senese-demystifying-ssh/">WordCamp Manchester 2018</a>.</p>
+]]></content></item><item><title>Alex the Frog</title><link>https://ceceppa.me/posts/2016/09/alex-the-frog/</link><pubDate>Fri, 02 Sep 2016 09:09:15 +0100</pubDate><author>hello@ceceppa.me (Alessandro Senese)</author><guid>https://ceceppa.me/posts/2016/09/alex-the-frog/</guid><description>My attempt to create a simple game using Unity.</description><content type="html"><![CDATA[<iframe src="https://ceceppa.github.io/atf/index.html" width="100%" height="600px"></iframe>
+<p>My attempt to create a <a href="https://ceceppa.github.io/atf/index.html">simple game</a> using <a href="https://unity.io/">Unity</a>.</p>
+]]></content></item></channel></rss>
