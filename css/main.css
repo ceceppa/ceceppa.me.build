@@ -29,6 +29,14 @@ main .posts {
     padding-right: 0;
 }
 
+.projects {
+    width: 100%;
+    max-width: 800px;
+    text-align: left;
+    padding: 20px;
+    margin: 20px auto;
+}
+
 .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
