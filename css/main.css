@@ -23,6 +23,20 @@ main {
     text-decoration: underline;
 }
 
+.menu-trigger {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+}
+
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+}
+
 
 main .posts {
     padding-left: 0;
