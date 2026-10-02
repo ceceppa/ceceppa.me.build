@@ -1,4 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts on Alessandro Senese (Ceceppa)</title><link>https://ceceppa.me/posts/</link><description>Recent content in Posts on Alessandro Senese (Ceceppa)</description><generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>hello@ceceppa.me (Alessandro Senese)</managingEditor><webMaster>hello@ceceppa.me (Alessandro Senese)</webMaster><copyright>&lt;a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0&lt;/a></copyright><lastBuildDate>Tue, 11 Feb 2020 09:20:02 +0100</lastBuildDate><atom:link href="https://ceceppa.me/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Why PHP namespace is better than prefixing</title><link>https://ceceppa.me/posts/2020/02/why-php-namespace-is-better-than-prefixing/</link><pubDate>Tue, 11 Feb 2020 09:20:02 +0100</pubDate><author>hello@ceceppa.me (Alessandro Senese)</author><guid>https://ceceppa.me/posts/2020/02/why-php-namespace-is-better-than-prefixing/</guid><description>One of the loved WordPress features is: how easy is to install and use 3rd party plugins to enhance our experience. And there are more than 55k plugins we can choose from! Cool, isn’t it?
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Writing on Alessandro Senese (Ceceppa)</title><link>https://ceceppa.me/posts/</link><description>Recent content in Writing on Alessandro Senese (Ceceppa)</description><generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>hello@ceceppa.me (Alessandro Senese)</managingEditor><webMaster>hello@ceceppa.me (Alessandro Senese)</webMaster><copyright>&lt;a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0&lt;/a></copyright><lastBuildDate>Tue, 11 Feb 2020 09:20:02 +0100</lastBuildDate><atom:link href="https://ceceppa.me/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>Why PHP namespace is better than prefixing</title><link>https://ceceppa.me/posts/2020/02/why-php-namespace-is-better-than-prefixing/</link><pubDate>Tue, 11 Feb 2020 09:20:02 +0100</pubDate><author>hello@ceceppa.me (Alessandro Senese)</author><guid>https://ceceppa.me/posts/2020/02/why-php-namespace-is-better-than-prefixing/</guid><description>One of the loved WordPress features is: how easy is to install and use 3rd party plugins to enhance our experience. And there are more than 55k plugins we can choose from! Cool, isn’t it?
 Is so cool that some users go crazy and start installing too many of them, but this is not what we’re talking about 🙂
 The uniqueness problem As a WordPress developer, we want to create a plugin and (maybe) publish it.</description><content type="html"><![CDATA[<p>One of the loved WordPress features is: how easy is to install and use 3rd party plugins to enhance our experience. And there are <a href="https://wordpress.org/plugins/">more than 55k plugins</a> we can choose from! Cool, isn’t it?<br>
 Is so cool that some users go crazy and start installing too many of them, but this is not what we’re talking about 🙂</p>
@@ -23,12 +23,12 @@ Is so cool that some users go crazy and start installing too many of them, but t
 </span></span><span style="display:flex;"><span> <span style="color:#f92672">...</span> <span style="color:#75715e">// do something
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
 </span></span></code></pre></div><p>This is quite a common problem: doing some initialisation when we first activate the plugin. In this example, take from the <a href="https://developer.wordpress.org/plugins/plugin-basics/activation-deactivation-hooks/">WordPress website</a>, the prefix chosen is <strong>pluginprefix_</strong>.</p>
-<h4 id="whats-wrong-with-that">What’s wrong with that?</h4>
+<h3 id="whats-wrong-with-that">What’s wrong with that?</h3>
 <ol>
 <li>Does not guarantee at all that’s unique</li>
 <li>Add distracting noise</li>
 </ol>
-<h5 id="uniquity">Uniquity</h5>
+<h4 id="uniquity">Uniquity</h4>
 <p>Doesn’t really matter how much fantasy we put in to choose a cool prefix, there is no real guarantee that someone else will have the same idea.</p>
 <p>Funny enough, once I’ve met a person with my same name and surname, so I already know that using <code>alessandro_senese_</code> as a prefix doesn’t guarantee me uniquity.</p>
 <p>Another problem we have is length and memorability. If I should prefix my functions with my name and surname, it’s at least 16 characters to type every time. Even my nickname <code>ceceppa_</code> would be 7 characters.<br>
@@ -38,7 +38,7 @@ Also, I should make them a bit unique for the project, for example: <code>cecece
 </blockquote>
 <p>That’s the common solution adopted, so I could use: <code>cmuu_</code> or <code>ceppa_muu_</code>.</p>
 <p>Yeah, that might work, but…</p>
-<h5 id="the-noise">The noise</h5>
+<h4 id="the-noise">The noise</h4>
 <blockquote>
 <p><strong>Noise is unwanted sound</strong> judged to be unpleasant, loud or <strong>disruptive to hearing</strong>. From a physics standpoint, <strong>noise is indistinguishable from sound</strong>, as both are vibrations through a medium, such as air or water.</p>
 <p><a href="https://en.wikipedia.org/wiki/Noise">https://en.wikipedia.org/wiki/Noise</a></p>
@@ -83,7 +83,7 @@ Also, I should make them a bit unique for the project, for example: <code>cecece
 </ul>
 <p><em><strong>NOTE:</strong> For unique I intend the possibility of clashing with 3rd party plugins or themes!</em></p>
 <p>As we have seen using prefix does solve this problem but also introduces new ones, that affect our code readability.</p>
-<h3 id="2-the-namespace">2. The namespace</h3>
+<h2 id="2-the-namespace">2. The namespace</h2>
 <blockquote>
 <p>What are namespaces? In the broadest definition namespaces are a way of encapsulating items.</p>
 <p>&ndash; <a href="https://www.php.net/manual/en/language.namespaces.rationale.php">php.net</a></p>
@@ -166,13 +166,13 @@ Also, I should make them a bit unique for the project, for example: <code>cecece
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Namespace2TestClass</span>();
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>There is no shortcut to access a parent namespace, but we have to specify the full namespace</p>
-<h4 id="namespace-aliasingimporting">Namespace: Aliasing/importing</h4>
+<h3 id="namespace-aliasingimporting">Namespace: Aliasing/importing</h3>
 <blockquote>
 <p>The ability to refer to an external fully qualified name with an alias, or importing, is an important feature of namespaces. This is similar to the ability of unix-based filesystems to create symbolic links to a file or to a directory.</p>
 <p>&ndash; <a href="https://www.php.net/manual/en/language.namespaces.importing.php">https://www.php.net/manual/en/language.namespaces.importing.php</a></p>
 </blockquote>
 <p>As we have seen, to access a function or class from a different namespace we have, each time, specify the full signature. This can be very annoying, but don’t worry we can use the use keyword to simplify our life 🙂</p>
-<h5 id="functions">Functions</h5>
+<h4 id="functions">Functions</h4>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">\</span>[<span style="color:#a6e22e">FULL</span> <span style="color:#66d9ef">NAMESPACE</span><span style="color:#a6e22e">\</span>]<span style="color:#a6e22e">\</span>[<span style="color:#66d9ef">Function</span> <span style="color:#a6e22e">name\</span>]
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">\</span>[<span style="color:#a6e22e">FULL</span> <span style="color:#66d9ef">NAMESPACE</span><span style="color:#a6e22e">\</span>]<span style="color:#a6e22e">\</span>[<span style="color:#66d9ef">Function</span> <span style="color:#a6e22e">name\</span>] <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">\</span>[<span style="color:#a6e22e">ALIAS\</span>]
 </span></span></code></pre></div><p>Example</p>
@@ -187,7 +187,7 @@ Also, I should make them a bit unique for the project, for example: <code>cecece
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// equivalent to: Namespace2Sublevelfunction_a();
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">another_function</span>();
 </span></span></code></pre></div><p>Aliasing allows us to use a function with a different name</p>
-<h5 id="classes">Classes</h5>
+<h4 id="classes">Classes</h4>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#a6e22e">\</span>[<span style="color:#a6e22e">FULL</span> <span style="color:#66d9ef">NAMESPACE</span><span style="color:#a6e22e">\</span>]<span style="color:#a6e22e">\</span>[<span style="color:#66d9ef">CLASS</span> <span style="color:#a6e22e">NAME\</span>];
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#a6e22e">\</span>[<span style="color:#a6e22e">FULL</span> <span style="color:#66d9ef">NAMESPACE</span><span style="color:#a6e22e">\</span>]<span style="color:#a6e22e">\</span>[<span style="color:#66d9ef">CLASS</span> <span style="color:#a6e22e">NAME\</span>] <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">\</span>[<span style="color:#a6e22e">ALIAS\</span>];
 </span></span></code></pre></div><p>Example</p>
@@ -202,7 +202,7 @@ Also, I should make them a bit unique for the project, for example: <code>cecece
 </span></span><span style="display:flex;"><span><span style="color:#75715e">// equivalent to: new Namespace2SublevelClassName();
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">new</span> <span style="color:#a6e22e">AnotherClass</span>();
 </span></span></code></pre></div><p>Aliasing allows use to use a class with a different name</p>
-<h5 id="namespace-aliasing">Namespace aliasing</h5>
+<h4 id="namespace-aliasing">Namespace aliasing</h4>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">use</span> <span style="color:#a6e22e">\</span>[<span style="color:#a6e22e">FULL</span> <span style="color:#66d9ef">NAMESPACE</span><span style="color:#a6e22e">\</span>] <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">\</span>[<span style="color:#a6e22e">ALIAS\</span>]
 </span></span></code></pre></div><p>Example</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">Namespace1</span>;
@@ -223,7 +223,7 @@ Also, I should make them a bit unique for the project, for example: <code>cecece
 For example<a href="https://marketplace.visualstudio.com/items?itemName=bmewburn.vscode-intelephense-client">,</a> we can have to type only <code>function_a</code>:</p>
 <p><img alt="Showcasing Intelliphense autoimport" src="intelephense-autoimport.gif"></p>
 <p>Intelephense addon in action</p>
-<h4 id="the-__namespace__-magic-keywordhttpswwwphpnetmanualenlanguagenamespacesnsconstantsphp"><a href="https://www.php.net/manual/en/language.namespaces.nsconstants.php">The __NAMESPACE__ magic keyword</a></h4>
+<h3 id="the-__namespace__-magic-keywordhttpswwwphpnetmanualenlanguagenamespacesnsconstantsphp"><a href="https://www.php.net/manual/en/language.namespaces.nsconstants.php">The __NAMESPACE__ magic keyword</a></h3>
 <p>Another thing to consider, when working with namespaces, is that for filters and hooks we have to pass the full signature of the class / function we want to call.</p>
 <ul>
 <li>👎 Doesn&rsquo;t work: The function <code>initialise</code> will never be called</li>
@@ -276,7 +276,7 @@ For example<a href="https://marketplace.visualstudio.com/items?itemName=bmewburn
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>Cool, isn’t it? Also if we change the namespace name both filter will still work!</p>
-<h4 id="access-global-classes">Access global classes</h4>
+<h3 id="access-global-classes">Access global classes</h3>
 <p>The last thing we have to consider when working with namespaces is that global WordPress classes and functions belong to the root namespace. And so to access them we have to prepend the backslash sign:</p>
 <ul>
 <li>👎 Doesn’t work: WP_Query is not in the same namespace</li>
@@ -528,7 +528,7 @@ I’ve used WordPress to learn and practice like:</p>
 <h2 id="whats-next">What’s next?</h2>
 <p>In the next weeks, I’m going to write more about my WordPress development adventures in using and experimenting with various tools.</p>
 <p>I’m going to talk about real-life problems I faced when working for WordPress agencies, and as a solo developer.</p>
-]]></content></item><item><title>Demistify Ssh</title><link>https://ceceppa.me/posts/2018/10/demistify-ssh/</link><pubDate>Sat, 27 Oct 2018 09:20:02 +0100</pubDate><author>hello@ceceppa.me (Alessandro Senese)</author><guid>https://ceceppa.me/posts/2018/10/demistify-ssh/</guid><description>My “Demystify SSH” slides for WordCamp Manchester 2018.</description><content type="html"><![CDATA[<iframe src="https://ceceppa.github.io/demystify-ssh/#/" width="100%" height="600px"></iframe>
+]]></content></item><item><title>Demystify SSH</title><link>https://ceceppa.me/posts/2018/10/demistify-ssh/</link><pubDate>Sat, 27 Oct 2018 09:20:02 +0100</pubDate><author>hello@ceceppa.me (Alessandro Senese)</author><guid>https://ceceppa.me/posts/2018/10/demistify-ssh/</guid><description>My “Demystify SSH” slides for WordCamp Manchester 2018.</description><content type="html"><![CDATA[<iframe src="https://ceceppa.github.io/demystify-ssh/#/" width="100%" height="600px"></iframe>
 <p>My <a href="https://ceceppa.github.io/demystify-ssh/#/">“Demystify SSH”</a> slides for <a href="https://wordpress.tv/2019/05/07/alejandro-senese-demystifying-ssh/">WordCamp Manchester 2018</a>.</p>
 ]]></content></item><item><title>Alex the Frog</title><link>https://ceceppa.me/posts/2016/09/alex-the-frog/</link><pubDate>Fri, 02 Sep 2016 09:09:15 +0100</pubDate><author>hello@ceceppa.me (Alessandro Senese)</author><guid>https://ceceppa.me/posts/2016/09/alex-the-frog/</guid><description>My attempt to create a simple game using Unity.</description><content type="html"><![CDATA[<iframe src="https://ceceppa.github.io/atf/index.html" width="100%" height="600px"></iframe>
 <p>My attempt to create a <a href="https://ceceppa.github.io/atf/index.html">simple game</a> using <a href="https://unity.io/">Unity</a>.</p>
